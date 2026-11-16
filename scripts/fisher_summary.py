@@ -2,50 +2,36 @@
 """Summarise Fisher matrices from the CosmoSIS ``fisher`` sampler.
 
     python scripts/fisher_summary.py output/fisher/fisher-joint-fastnc-lcdm-nla.txt
-    python scripts/fisher_summary.py A.txt B.txt --labels 2pt 2pt+Map3 \\
-        --priors config/priors/des-y6-priors.ini --plot fisher.png
+    python scripts/fisher_summary.py A.txt B.txt --labels 2pt 2pt+Map3 --plot fisher.png
 
 Prints marginalised and conditional 1-sigma errors and the figure of merit
 of a parameter pair (default Omega_m - S_8); with ``--plot`` draws the 68%
-and 95% ellipses.  The fisher sampler ignores priors, so Gaussian priors
-from a CosmoSIS priors file can be added here; parameters can also be fixed.
+and 95% ellipses.  The Gaussian priors of the run's priors file are already
+in the matrix (the fisher sampler adds them); further ones can be added
+with ``--add-prior`` and parameters can be held fixed with ``--fix``.
 """
 import argparse
-import configparser
-
-import numpy as np
 
 from desy6_3pcf import fisher as F
-
-
-def read_gaussian_priors(filename):
-    parser = configparser.ConfigParser()
-    parser.read(filename)
-    sigmas = {}
-    for section in parser.sections():
-        for name, value in parser.items(section):
-            words = value.split()
-            if words[0].lower().startswith("gauss"):
-                sigmas[f"{section}--{name}".lower()] = float(words[2])
-    return sigmas
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("files", nargs="+")
     parser.add_argument("--labels", nargs="+")
-    parser.add_argument("--priors", help="CosmoSIS priors file; its Gaussian priors are added")
+    parser.add_argument("--add-prior", nargs="*", default=[], metavar="NAME=SIGMA",
+                        help="extra Gaussian priors, e.g. cosmological_parameters--h0=0.01")
     parser.add_argument("--fix", nargs="*", default=[], help="parameters to hold fixed (section--name)")
     parser.add_argument("--pair", nargs=2, default=["cosmological_parameters--omega_m", "cosmological_parameters--s_8"])
     parser.add_argument("--plot", help="output image with the ellipses of --pair")
     args = parser.parse_args()
     labels = args.labels or args.files
-    priors = read_gaussian_priors(args.priors) if args.priors else {}
+    priors = {item.split("=")[0].lower(): float(item.split("=")[1]) for item in args.add_prior}
 
     results = []
     for filename, label in zip(args.files, labels):
         names, fisher = F.read_fisher(filename)
-        fisher = F.add_gaussian_priors(names, fisher, {k: v for k, v in priors.items() if k in names})
+        fisher = F.add_gaussian_priors(names, fisher, priors)
         names, fisher = F.fix_parameters(names, fisher, args.fix)
         marginal, conditional = F.marginal_errors(names, fisher), F.conditional_errors(names, fisher)
         print(f"\n== {label}")

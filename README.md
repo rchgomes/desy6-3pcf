@@ -139,12 +139,13 @@ cosmosis config/fisher/map3-emulator.ini
 
 python scripts/fisher_summary.py output/fisher/fisher-map3-fastnc-lcdm-nla.txt \
     output/fisher/fisher-joint-fastnc-lcdm-nla.txt --labels Map3 2pt+Map3 \
-    --priors config/priors/des-y6-priors.ini --plot output/fisher/forecast.png
+    --plot output/fisher/forecast.png
 ```
 
-The CosmoSIS `fisher` sampler ignores priors; `fisher_summary.py` adds the
-Gaussian ones (and can fix parameters with `--fix`). It reports marginalised
-and conditional errors and the Ω_m–S_8 figure of merit.
+`fisher_summary.py` reports marginalised and conditional errors and the
+Ω_m–S_8 figure of merit. The Gaussian priors of the priors file are already
+included by the CosmoSIS `fisher` sampler; `--add-prior` adds further ones and
+`--fix` holds parameters fixed.
 
 ### 2. Emulator training sets
 
