@@ -127,7 +127,11 @@ python scripts/make_map3_file.py --joint-cov cov_joint.npy --nsim 1000 \
 
 ### 1. Fisher forecasts (before any chain)
 
-Two interchangeable versions; the brute-force one needs no emulator.
+Two interchangeable versions; the brute-force one needs no emulator. With NLA
+a brute-force evaluation takes about a minute; brute-force TATT works too
+(`-p DEFAULT.ia=tatt`) but costs tens of minutes and ~10 GB of memory per
+evaluation, so TATT forecasts are better done with the emulators. Fisher
+steps must stay inside the emulator training box.
 
 ```bash
 # brute-force fastnc
