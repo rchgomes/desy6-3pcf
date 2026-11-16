@@ -7,21 +7,19 @@ functions.
 
 The theory is computed with [fastnc](https://github.com/git-sunao/fastnc)
 (Sugiyama et al. 2024, [arXiv:2407.01798](https://arxiv.org/abs/2407.01798)) and the pipelines run in
-[CosmoSIS](https://cosmosis.readthedocs.io). The methodology follows the DES Y3
-mass-aperture analyses (Gomes et al.); this repository is the Y6 successor of
-the Y3 `3pcf_integrator` code.
+[CosmoSIS](https://cosmosis.readthedocs.io). 
 
 ## Analysis choices
 
-| | DES Y6 (this repo) | DES Y3 |
-|---|---|---|
-| 3PCF binning (TreeCorr `LogSAS`) | 1′–150′, 25 log bins, 100 φ bins on [0, π] | 0.5′–80′, 20 bins |
-| Aperture radii | 3, 5, 10, 20, 40 arcmin | 7, 14, 25, 40 arcmin |
-| Filter combinations | equal apertures (configurable: all triplets) | equal apertures |
-| Data vector | 20 tomographic triplets × 5 filters = 100 points | 20 × 4 = 80 |
-| Scale cuts | none yet (hooks in place) | 8′ on the 3PCF |
-| 2pt compression | none | MOPED |
-| Models | ΛCDM, wCDM × NLA, TATT; optional baryonic feedback | same |
+| | DES Y6 |
+|---|---|
+| 3PCF binning (TreeCorr `LogSAS`) | 1′–150′, 25 log bins, 100 φ bins on [0, π] |
+| Aperture radii | 3, 5, 10, 20, 40 arcmin |
+| Filter combinations | equal apertures (configurable: all triplets) |
+| Data vector | 20 tomographic triplets × 5 filters = 100 points |
+| Scale cuts | none yet |
+| 2pt compression | none yet|
+| Models | ΛCDM, wCDM × NLA, TATT; optional baryonic feedback |
 
 These numbers live in one place, [`desy6_3pcf/binning.py`](desy6_3pcf/binning.py),
 and are the defaults of every module and script.
