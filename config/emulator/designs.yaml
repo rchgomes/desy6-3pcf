@@ -1,0 +1,25 @@
+# Parameter boxes of the emulator training sets (Sobol designs).
+#
+# Keys are CosmoSIS parameters, "section--name"; values are [low, high].
+# The boxes are ~5% wider than the sampling ranges in config/values so that
+# chains never touch the edge of the training set.
+
+reference_lcdm: &lcdm
+  cosmological_parameters--omega_m: [0.10, 0.52]
+  cosmological_parameters--s_8: [0.58, 0.97]
+  cosmological_parameters--h0: [0.53, 0.93]
+  cosmological_parameters--omega_b: [0.028, 0.072]
+  cosmological_parameters--n_s: [0.86, 1.08]
+
+reference_wcdm: &wcdm
+  <<: *lcdm
+  cosmological_parameters--w: [-2.1, -0.45]
+
+# The TATT components are emulated on the wCDM box and used for both models.
+tatt:
+  <<: *wcdm
+  intrinsic_alignment_parameters--a1: [-5.2, 5.2]
+  intrinsic_alignment_parameters--alpha1: [-5.2, 5.2]
+  intrinsic_alignment_parameters--a2: [-5.2, 5.2]
+  intrinsic_alignment_parameters--alpha2: [-5.2, 5.2]
+  intrinsic_alignment_parameters--bias_ta: [-0.05, 2.05]

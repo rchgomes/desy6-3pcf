@@ -1,0 +1,22 @@
+# outputs and private data: nothing under these directories is tracked
+/output/
+/data/*
+!/data/README.md
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# editors / OS
+.DS_Store
+.vscode/
+.idea/
+
+# job scripts and logs
+*.log
+slurm-*.out
