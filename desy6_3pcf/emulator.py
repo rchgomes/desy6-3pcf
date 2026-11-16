@@ -23,6 +23,20 @@ TRANSFORMS = ("log10", "asinh")
 _trapezoid = getattr(np, "trapezoid", None) or np.trapz
 
 
+
+def import_cosmopower():
+    """Import ``cosmopower_NN`` with the workarounds cosmopower 0.1.x needs
+    on current numpy (no ``np.infty``) and TensorFlow (Keras 2 API)."""
+    import os
+
+    if not hasattr(np, "infty"):
+        np.infty = np.inf
+    os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
+    from cosmopower import cosmopower_NN
+
+    return cosmopower_NN
+
+
 class FeatureScaler:
     """Invertible map from ``<Map^3>`` slices to network targets in ``[0, 1]``.
 
@@ -139,9 +153,7 @@ class Map3SliceEmulator:
             if prefix.endswith(suffix):
                 prefix = prefix[: -len(suffix)]
         meta = json.loads(Path(f"{prefix}.json").read_text())
-        from cosmopower import cosmopower_NN
-
-        network = cosmopower_NN(restore=True, restore_filename=prefix)
+        network = import_cosmopower()(restore=True, restore_filename=prefix)
         return cls(
             network,
             meta["parameters"],

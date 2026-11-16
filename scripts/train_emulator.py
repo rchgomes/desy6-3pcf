@@ -19,7 +19,7 @@ import numpy as np
 from desy6_3pcf import binning
 from desy6_3pcf.chains import read_chain, vector_columns
 from desy6_3pcf.design import load_design
-from desy6_3pcf.emulator import FeatureScaler, Map3SliceEmulator
+from desy6_3pcf.emulator import FeatureScaler, Map3SliceEmulator, import_cosmopower
 
 ROOT = Path(os.environ.get("DESY6_3PCF_DIR", Path(__file__).resolve().parents[1]))
 
@@ -60,7 +60,9 @@ def main():
     parser.add_argument("--designs", default=ROOT / "config/emulator/designs.yaml")
     args = parser.parse_args()
 
-    parameters = list(load_design(args.designs, args.design))
+    design = load_design(args.designs, args.design)
+    parameters = list(design)
+    box_min, box_max = np.array(list(design.values())).T
     filters = binning.filter_triplets(args.filters, args.filter_mode)
     params, features = load_training_set(args.chains, parameters)
     nfeature = len(args.z_slices) * filters.shape[1]
@@ -82,7 +84,7 @@ def main():
 
     scaler = FeatureScaler.fit(features[train], transform)
     emulator = Map3SliceEmulator(
-        None, parameters, params[train].min(axis=0), params[train].max(axis=0),
+        None, parameters, box_min, box_max,  # valid over the whole design box
         args.z_slices, filters, scaler,
         info={
             "design": args.design,
@@ -95,8 +97,8 @@ def main():
         },
     )
 
+    cosmopower_NN = import_cosmopower()
     import tensorflow as tf
-    from cosmopower import cosmopower_NN
 
     np.random.seed(args.seed)
     tf.random.set_seed(args.seed)

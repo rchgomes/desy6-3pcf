@@ -37,6 +37,8 @@ def main():
     params, truth = test["params"], test["features"]
     inside = emulator.in_range(params)
     print(f"{len(params)} test samples, {np.sum(~inside)} outside the training range (ignored)")
+    if not inside.any():
+        raise SystemExit("no test sample lies inside the training range")
     error = 100.0 * fractional_error(emulator, params[inside], truth[inside])
 
     nz, nf = emulator.z_slices.size, emulator.filters.shape[1]

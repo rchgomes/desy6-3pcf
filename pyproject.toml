@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-emulator = ["cosmopower", "tensorflow"]
+emulator = ["cosmopower", "tensorflow", "tf_keras"]
 baryons = ["baccoemu"]
 pixwin = ["healpy"]
 plots = ["matplotlib"]
