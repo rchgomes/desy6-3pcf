@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "desy6-3pcf"
+version = "0.1.0"
+description = "Third-order cosmic shear (aperture-mass) analysis of DES Y6"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Rafael C. H. Gomes" }]
+dependencies = [
+    "numpy",
+    "scipy",
+    "astropy",
+    "pyyaml",
+    # fastnc: install the pinned legacy branch separately, see README
+]
+
+[project.optional-dependencies]
+emulator = ["cosmopower", "tensorflow"]
+baryons = ["baccoemu"]
+pixwin = ["healpy"]
+plots = ["matplotlib"]
+test = ["pytest"]
+
+[tool.setuptools]
+packages = ["desy6_3pcf"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
