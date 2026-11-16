@@ -74,7 +74,8 @@ def main():
 
     transform = args.transform
     if transform == "auto":
-        transform = "log10" if np.all(features > 0) else "asinh"
+        # TATT components change sign across a realistic parameter box
+        transform = "asinh" if args.component or np.any(features <= 0) else "log10"
     print(f"{len(parameters)} parameters -> {nfeature} features, '{transform}' transform")
 
     rng = np.random.default_rng(args.seed)
